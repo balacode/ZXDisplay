@@ -9,6 +9,7 @@
 // # Drawing Functions
 //   function clearScreenDithered(context)
 //   function drawChar(context, line, col, ch)
+//   function drawText(context, line, col, text)
 
 // -----------------------------------------------------------------------------
 // # Constants
@@ -990,6 +991,32 @@ function drawChar(context, line, col, ch) {
             const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
             co.fillStyle = isInk ? ink : paper;
             co.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
+        }
+    }
+}
+
+/** drawText():
+ *  Draws a string of text starting from the specified position.
+ *  If the text spills past the last column, continues the text
+ *  on the next line from the first column.
+ *
+ *  @param [context]  The context into which to draw.
+ *
+ *  @param [line]     The line number, a number from 0 to LINES-1.
+ *                    The starting line is at the top of the display.
+ *
+ *  @param [col]      The column number, a number from 0 to COLUMNS-1.
+ *                    The starting column is at the left of the display.
+ *
+ *  @param [ch]       The string to draw.
+ */
+function drawText(context, line, col, text) {
+    const length = text.length;
+    for (let i = 0; i < length && line < LINES; i++) {
+        drawChar(context, line, col, text.charAt(i));
+        if (++col >= COLUMNS) {
+            col = 0;
+            line++;
         }
     }
 }
