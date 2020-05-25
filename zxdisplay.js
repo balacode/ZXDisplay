@@ -937,6 +937,10 @@ function drawAll() {
     paper = BRYELLOW;
     ink = BLACK;
     clearScreenDithered(co)
+    //
+    paper = RED;
+    ink = BRWHITE;
+    drawCharset(co);
 }
 
 // -----------------------------------------------------------------------------
