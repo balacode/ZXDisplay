@@ -57,9 +57,11 @@ function drawAll() {
     //
     // clear the screen
     let canvas = document.getElementById("zx_canvas");
-    let c = canvas.getContext("2d");
-    c.fillStyle = WHITE;
-    c.fillRect(0, 0, XMAX * SCALE, YMAX * SCALE);
+    let co = canvas.getContext("2d");
+    //
+    paper = BRYELLOW;
+    ink = BLACK;
+    clearScreenDithered(co)
 }
 
 // -----------------------------------------------------------------------------
