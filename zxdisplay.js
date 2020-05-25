@@ -3,17 +3,57 @@
 // (c) balarabe@protonmail.com                                      License: MIT
 // -----------------------------------------------------------------------------
 
-// # Constants
+// # ZXDisplay Object:
+// # Internal Constants
 // # Display State
-// # Drawing Functions
+// # Drawing Methods
 //   clearScreenDithered(context)
 //   drawChar(context, line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
+// # ZXDisplay End
+//
 // # Loader
 
 // -----------------------------------------------------------------------------
-// # Constants
+// # ZXDisplay Object:
+
+const ZXDisplay = (function() {
+
+const my = {
+
+    // Public Constants:
+    //
+    // These are the 15 colours the ZX Spectrum can display:
+    //
+    // Normal Colours:
+    BLACK:     "#000000",
+    BLUE:      "#0000D7",
+    RED:       "#D70000",
+    MAGENTA:   "#D700D7",
+    GREEN:     "#00D700",
+    CYAN:      "#00D7D7",
+    YELLOW:    "#D7D700",
+    WHITE:     "#D7D7D7",
+    //
+    // Bright Colours:
+    BRBLUE:    "#0000FF",
+    BRRED:     "#FF0000",
+    BRMAGENTA: "#FF00FF",
+    BRGREEN:   "#00FF00",
+    BRCYAN:    "#00FFFF",
+    BRYELLOW:  "#FFFF00",
+    BRWHITE:   "#FFFFFF",
+
+    // Public Methods:
+    clearScreenDithered: clearScreenDithered,
+    drawChar: drawChar,
+    drawCharset: drawCharset,
+    drawText: drawText
+};
+
+// -----------------------------------------------------------------------------
+// # Internal Constants
 
 // Display resolution:
 const CHARSIZE = 8; // each character is 8 pixels high and wide
@@ -22,27 +62,6 @@ const LINES = 24;   // number of text lines (and vertical colour attributes)
 const SCALE = 3;    // one Spectrum pixel is so many pixels on modern displays
 const XMAX = 256;   // horizontal resolution
 const YMAX = 192;   // vertical resolution
-
-// 15 colours the ZX Spectrum can display:
-//
-// Normal:
-const BLACK    = "#000000";
-const BLUE     = "#0000D7";
-const RED      = "#D70000";
-const MAGENTA  = "#D700D7";
-const GREEN    = "#00D700";
-const CYAN     = "#00D7D7";
-const YELLOW   = "#D7D700";
-const WHITE    = "#D7D7D7";
-//
-// Bright:
-const BRBLUE    = "#0000FF";
-const BRRED     = "#FF0000";
-const BRMAGENTA = "#FF00FF";
-const BRGREEN   = "#00FF00";
-const BRCYAN    = "#00FFFF";
-const BRYELLOW  = "#FFFF00";
-const BRWHITE   = "#FFFFFF";
 
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
@@ -919,11 +938,11 @@ const charset = new Uint8Array([
 // -----------------------------------------------------------------------------
 // # Display State
 
-let ink = BLACK;
-let paper = WHITE;
+my.ink = my.BLACK;
+my.paper = my.WHITE;
 
 // -----------------------------------------------------------------------------
-// # Drawing Functions
+// # Drawing Methods
 
 /** clearScreenDithered():
  *  Clears the screen using a mix of two colours.
@@ -937,7 +956,7 @@ function clearScreenDithered(context) {
         let xf = yf;
         for (let x = 0; x < XMAX; x++) {
             xf = !xf;
-            context.fillStyle = xf ? ink : paper;
+            context.fillStyle = xf ? my.ink : my.paper;
             context.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
         }
     }
@@ -972,7 +991,7 @@ function drawChar(context, line, col, ch) {
         const byte = charset[offset];
         for (let ix = 0; ix < 8; ix++) {
             const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
-            context.fillStyle = isInk ? ink : paper;
+            context.fillStyle = isInk ? my.ink : my.paper;
             context.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
         }
     }
@@ -980,7 +999,7 @@ function drawChar(context, line, col, ch) {
 
 /** drawCharset():
  *  Draws the entire character set at the bottom of the screen.
- *  This function is just used so we can visually check that
+ *  This method exists so we can visually check that
  *  the character set in [charset] renders properly.
  *
  *  @param [context]  Context into which to draw.
@@ -1019,23 +1038,29 @@ function drawText(context, line, col, text) {
 }
 
 // -----------------------------------------------------------------------------
+// # ZXDisplay End
+return my;
+})();
+
+// -----------------------------------------------------------------------------
 // # Loader
 
 window.addEventListener("load", drawAll, false);
 
 function drawAll() {
-    let canvas = document.getElementById("zx_canvas");
-    let context = canvas.getContext("2d");
+    const canvas = document.getElementById("zx_canvas");
+    const context = canvas.getContext("2d");
+    const d = ZXDisplay;
     //
     // clear the screen
-    paper = BRYELLOW;
-    ink = BLACK;
-    clearScreenDithered(context);
+    d.paper = d.BRYELLOW;
+    d.ink = d.BLACK;
+    d.clearScreenDithered(context);
     //
     // draw the character set
-    paper = RED;
-    ink = BRWHITE;
-    drawCharset(context);
+    d.paper = d.RED;
+    d.ink = d.BRWHITE;
+    d.drawCharset(context);
 }
 
 //end
