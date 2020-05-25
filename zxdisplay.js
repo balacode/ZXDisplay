@@ -8,6 +8,7 @@
 // # Loader
 // # Drawing Functions
 //   function clearScreenDithered(context)
+//   function drawChar(context, line, col, ch)
 
 // -----------------------------------------------------------------------------
 // # Constants
@@ -953,6 +954,42 @@ function clearScreenDithered(context) {
             xf = !xf;
             context.fillStyle = xf ? ink : paper;
             context.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
+        }
+    }
+}
+
+/** drawChar():
+ *  Draws a single character at the specified line and column.
+ *
+ *  @param [context]  The context into which to draw.
+ *
+ *  @param [line]     The line number, a number from 0 to LINES-1.
+ *                    The starting line is at the top of the display.
+ *
+ *  @param [col]      The column number, a number from 0 to COLUMNS-1.
+ *                    The starting column is at the left of the display.
+ *
+ *  @param [ch]       The character to draw, as a string.
+ *                    Only the first character of the string is used.
+ */
+function drawChar(context, line, col, ch) {
+    const co = context;
+    //
+    // x and y specify the top left corner of the character on the display
+    const x = col * CHARSIZE * SCALE;
+    const y = line * CHARSIZE * SCALE;
+    //
+    // index of the first byte of the character in the character set
+    const ci = (ch.charCodeAt(0) - 0x20) * CHARSIZE;
+    //
+    // fetch each of the bytes of the character
+    for (let iy = 0; iy < CHARSIZE; iy++) {
+        const offset = ci + iy;
+        const byte = charset[offset];
+        for (let ix = 0; ix < 8; ix++) {
+            const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
+            co.fillStyle = isInk ? ink : paper;
+            co.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
         }
     }
 }
