@@ -5,12 +5,12 @@
 
 // # Constants
 // # Display State
-// # Loader
 // # Drawing Functions
 //   clearScreenDithered(context)
 //   drawChar(context, line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
+// # Loader
 
 // -----------------------------------------------------------------------------
 // # Constants
@@ -923,26 +923,6 @@ let ink = BLACK;
 let paper = WHITE;
 
 // -----------------------------------------------------------------------------
-// # Loader
-
-window.addEventListener("load", drawAll, false);
-
-function drawAll() {
-    let canvas = document.getElementById("zx_canvas");
-    let context = canvas.getContext("2d");
-    //
-    // clear the screen
-    paper = BRYELLOW;
-    ink = BLACK;
-    clearScreenDithered(context);
-    //
-    // draw the character set
-    paper = RED;
-    ink = BRWHITE;
-    drawCharset(context);
-}
-
-// -----------------------------------------------------------------------------
 // # Drawing Functions
 
 /** clearScreenDithered():
@@ -1036,6 +1016,26 @@ function drawText(context, line, col, text) {
             line++;
         }
     }
+}
+
+// -----------------------------------------------------------------------------
+// # Loader
+
+window.addEventListener("load", drawAll, false);
+
+function drawAll() {
+    let canvas = document.getElementById("zx_canvas");
+    let context = canvas.getContext("2d");
+    //
+    // clear the screen
+    paper = BRYELLOW;
+    ink = BLACK;
+    clearScreenDithered(context);
+    //
+    // draw the character set
+    paper = RED;
+    ink = BRWHITE;
+    drawCharset(context);
 }
 
 //end
