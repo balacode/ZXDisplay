@@ -9,6 +9,7 @@
 // # Drawing Functions
 //   function clearScreenDithered(context)
 //   function drawChar(context, line, col, ch)
+//   function drawCharset(context)
 //   function drawText(context, line, col, text)
 
 // -----------------------------------------------------------------------------
@@ -993,6 +994,20 @@ function drawChar(context, line, col, ch) {
             co.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
         }
     }
+}
+
+/** drawCharset():
+ *  Draws the entire character set at the bottom of the screen.
+ *  This function is just used so we can visually check that
+ *  the character set in [charset] renders properly.
+ *
+ *  @param [context]  The context into which to draw.
+ */
+function drawCharset(context) {
+    let chars = "";
+    for (let ch = 0x20; ch <= 0x7F; ch++)
+        chars += String.fromCharCode(ch);
+    drawText(context, 21, 0, chars);
 }
 
 /** drawText():
