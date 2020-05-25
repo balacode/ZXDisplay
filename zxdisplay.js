@@ -7,10 +7,10 @@
 // # Display State
 // # Loader
 // # Drawing Functions
-//   function clearScreenDithered(context)
-//   function drawChar(context, line, col, ch)
-//   function drawCharset(context)
-//   function drawText(context, line, col, text)
+//   clearScreenDithered(context)
+//   drawChar(context, line, col, ch)
+//   drawCharset(context)
+//   drawText(context, line, col, text)
 
 // -----------------------------------------------------------------------------
 // # Constants
@@ -919,8 +919,8 @@ const charset = [
 // -----------------------------------------------------------------------------
 // # Display State
 
-var ink = BLACK;
-var paper = WHITE;
+let ink = BLACK;
+let paper = WHITE;
 
 // -----------------------------------------------------------------------------
 // # Loader
@@ -928,28 +928,27 @@ var paper = WHITE;
 window.addEventListener("load", drawAll, false);
 
 function drawAll() {
-    console.log("drawAll()");
+    let canvas = document.getElementById("zx_canvas");
+    let context = canvas.getContext("2d");
     //
     // clear the screen
-    let canvas = document.getElementById("zx_canvas");
-    let co = canvas.getContext("2d");
-    //
     paper = BRYELLOW;
     ink = BLACK;
-    clearScreenDithered(co)
+    clearScreenDithered(context);
     //
+    // draw the character set
     paper = RED;
     ink = BRWHITE;
-    drawCharset(co);
+    drawCharset(context);
 }
 
 // -----------------------------------------------------------------------------
 // # Drawing Functions
 
-/**
- *  clearScreenDithered(): clears the screen using a mix of two colours.
+/** clearScreenDithered():
+ *  Clears the screen using a mix of two colours.
  *
- *  @param [context]  the context into which to paint.
+ *  @param [context]  Context into which to draw.
  */
 function clearScreenDithered(context) {
     let yf = false;
@@ -967,19 +966,18 @@ function clearScreenDithered(context) {
 /** drawChar():
  *  Draws a single character at the specified line and column.
  *
- *  @param [context]  The context into which to draw.
+ *  @param [context]  Context into which to draw.
  *
- *  @param [line]     The line number, a number from 0 to LINES-1.
+ *  @param [line]     Line number, a number from 0 to LINES-1.
  *                    The starting line is at the top of the display.
  *
- *  @param [col]      The column number, a number from 0 to COLUMNS-1.
+ *  @param [col]      Column number, a number from 0 to COLUMNS-1.
  *                    The starting column is at the left of the display.
  *
  *  @param [ch]       The character to draw, as a string.
  *                    Only the first character of the string is used.
  */
 function drawChar(context, line, col, ch) {
-    const co = context;
     //
     // x and y specify the top left corner of the character on the display
     const x = col * CHARSIZE * SCALE;
@@ -994,8 +992,8 @@ function drawChar(context, line, col, ch) {
         const byte = charset[offset];
         for (let ix = 0; ix < 8; ix++) {
             const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
-            co.fillStyle = isInk ? ink : paper;
-            co.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
+            context.fillStyle = isInk ? ink : paper;
+            context.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
         }
     }
 }
@@ -1005,7 +1003,7 @@ function drawChar(context, line, col, ch) {
  *  This function is just used so we can visually check that
  *  the character set in [charset] renders properly.
  *
- *  @param [context]  The context into which to draw.
+ *  @param [context]  Context into which to draw.
  */
 function drawCharset(context) {
     let chars = "";
@@ -1019,12 +1017,12 @@ function drawCharset(context) {
  *  If the text spills past the last column, continues the text
  *  on the next line from the first column.
  *
- *  @param [context]  The context into which to draw.
+ *  @param [context]  Context into which to draw.
  *
- *  @param [line]     The line number, a number from 0 to LINES-1.
+ *  @param [line]     Line number, a number from 0 to LINES-1.
  *                    The starting line is at the top of the display.
  *
- *  @param [col]      The column number, a number from 0 to COLUMNS-1.
+ *  @param [col]      Column number, a number from 0 to COLUMNS-1.
  *                    The starting column is at the left of the display.
  *
  *  @param [ch]       The string to draw.
