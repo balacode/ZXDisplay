@@ -47,7 +47,7 @@ const BRWHITE   = "#FFFFFF";
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
 // Each byte/line represents a row of pixels of the character.
-const charset = [
+const charset = new Uint8Array([
            //
            // @ROM  BINARY    HEX   ASCII CHAR
            //
@@ -914,7 +914,7 @@ const charset = [
     0x99,  // 3FFD  10011001
     0x42,  // 3FFE  01000010
     0x3C   // 3FFF  00111100
-];
+]);
 
 // -----------------------------------------------------------------------------
 // # Display State
