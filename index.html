@@ -1,0 +1,32 @@
+<!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>ZX Display</title>
+        <style>
+            html {
+                height: 100%;
+            }
+            body {
+                display: flex;
+                height: 100%;
+                justify-content: center; /* horizontal */
+                align-items: center; /* vertical */
+                padding: 0;
+                margin: 0;
+                background-color: #101010;
+            }
+            #zx_canvas {
+                width: 768px;  /* 256 x-resolution * 3 */
+                height: 576px; /* 192 y-resolution * 3 */
+                background-color: black;
+            }
+        </style>
+        <script type="text/javascript" src="zxdisplay.js"></script>
+    </head>
+    <body>
+        <canvas id="zx_canvas" width="768" height="576">
+		        Your browser does not support HTML5 Canvas
+	      </canvas>
+    </body>
+</html>
