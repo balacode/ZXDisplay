@@ -6,6 +6,8 @@
 // # Constants
 // # Display State
 // # Loader
+// # Drawing Functions
+//   function clearScreenDithered(context)
 
 // -----------------------------------------------------------------------------
 // # Constants
@@ -58,6 +60,27 @@ function drawAll() {
     let c = canvas.getContext("2d");
     c.fillStyle = WHITE;
     c.fillRect(0, 0, XMAX * SCALE, YMAX * SCALE);
+}
+
+// -----------------------------------------------------------------------------
+// # Drawing Functions
+
+/**
+ *  clearScreenDithered(): clears the screen using a mix of two colours.
+ *
+ *  @param [context]  the context into which to paint.
+ */
+function clearScreenDithered(context) {
+    let yf = false;
+    for (let y = 0; y < YMAX; y++) {
+        yf = !yf;
+        let xf = yf;
+        for (let x = 0; x < XMAX; x++) {
+            xf = !xf;
+            context.fillStyle = xf ? ink : paper;
+            context.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
+        }
+    }
 }
 
 //end
