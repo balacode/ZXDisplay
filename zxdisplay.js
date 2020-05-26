@@ -6,11 +6,13 @@
 // # ZXDisplay Object:
 // # Internal Constants
 // # Display State
+//
 // # Drawing Methods
 //   clearScreenDithered(context)
 //   drawChar(context, line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
+//
 // # ZXDisplay End
 //
 // # Loader
@@ -19,6 +21,12 @@
 // # ZXDisplay Object:
 
 const ZXDisplay = (function() {
+
+// Display resolution:
+const COLUMNS = 32; // number of text columns (and horizontal colour attributes)
+const LINES = 24;   // number of text lines (and vertical colour attributes)
+const XMAX = 256;   // horizontal resolution
+const YMAX = 192;   // vertical resolution
 
 const my = {
 
@@ -55,18 +63,13 @@ const my = {
 // -----------------------------------------------------------------------------
 // # Internal Constants
 
-// Display resolution:
 const CHARSIZE = 8; // each character is 8 pixels high and wide
-const COLUMNS = 32; // number of text columns (and horizontal colour attributes)
-const LINES = 24;   // number of text lines (and vertical colour attributes)
 const SCALE = 3;    // one Spectrum pixel is so many pixels on modern displays
-const XMAX = 256;   // horizontal resolution
-const YMAX = 192;   // vertical resolution
 
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
 // Each byte/line represents a row of pixels of the character.
-const charset = new Uint8Array([
+const CHARSET = new Uint8ClampedArray([
            //
            // @ROM  BINARY    HEX   ASCII CHAR
            //
@@ -979,7 +982,7 @@ function clearScreenDithered(context) {
 function drawChar(context, line, col, ch) {
     //
     // x and y specify the top left corner of the character on the display
-    const x = col * CHARSIZE * SCALE;
+    const x = col  * CHARSIZE * SCALE;
     const y = line * CHARSIZE * SCALE;
     //
     // index of the first byte of the character in the character set
@@ -988,7 +991,7 @@ function drawChar(context, line, col, ch) {
     // fetch each of the bytes of the character
     for (let iy = 0; iy < CHARSIZE; iy++) {
         const offset = ci + iy;
-        const byte = charset[offset];
+        const byte = CHARSET[offset];
         for (let ix = 0; ix < 8; ix++) {
             const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
             context.fillStyle = isInk ? my.ink : my.paper;
@@ -999,8 +1002,8 @@ function drawChar(context, line, col, ch) {
 
 /** drawCharset():
  *  Draws the entire character set at the bottom of the screen.
- *  This method exists so we can visually check that
- *  the character set in [charset] renders properly.
+ *  This method exists so we can visually check that the
+ *  system character set in renders properly.
  *
  *  @param [context]  Context into which to draw.
  */
