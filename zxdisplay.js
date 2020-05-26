@@ -1220,19 +1220,38 @@ window.addEventListener("load", () => {
 }, false);
 
 function drawAll() {
-    const canvas = document.getElementById("zx_canvas");
-    const context = canvas.getContext("2d");
+    const c = console;
+    c.time("drawAll()");
+    let context = ZXDisplay.context();
     const d = ZXDisplay;
     //
-    // clear the screen
-    d.paper = d.BRYELLOW;
-    d.ink = d.BLACK;
-    d.clearScreenDithered(context);
-    //
-    // draw the character set
-    d.paper = d.RED;
-    d.ink = d.BRWHITE;
-    d.drawCharset(context);
+    // clear the screen with a dithered background
+    if (true) {
+        c.time("cls");
+        d.paper = d.BRYELLOW;
+        d.ink = d.BLACK;
+        d.clearScreenDithered(context);
+        c.timeEnd("cls");
+    }
+    // draw a random strip (at top)
+    if (true) {
+        c.time("randomize");
+        d.randomizeArea(0, 0, 3, d.COLUMNS);
+        c.timeEnd("randomize");
+        //
+        c.time("draw_random");
+        d.updateArea(context, 0, 0, 3, d.COLUMNS);
+        c.timeEnd("draw_random");
+    }
+    // draw the character set (at bottom)
+    if (true) {
+        c.time("charset");
+        d.paper = d.RED;
+        d.ink = d.BRWHITE;
+        d.drawCharset(context);
+        c.timeEnd("charset");
+    }
+    c.timeEnd("drawAll()");
 }
 
 //end
