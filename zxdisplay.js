@@ -15,6 +15,7 @@
 //   drawChar(context, line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
+//   randomizeArea(line, col, lines, cols)
 //
 // # ZXDisplay End
 //
@@ -66,7 +67,8 @@ const my = {
     clearScreenDithered: clearScreenDithered,
     drawChar: drawChar,
     drawCharset: drawCharset,
-    drawText: drawText
+    drawText: drawText,
+    randomizeArea: randomizeArea
 };
 
 // -----------------------------------------------------------------------------
@@ -1094,6 +1096,39 @@ function drawText(context, line, col, text) {
             line++;
         }
     }
+}
+
+/** randomizeArea():
+ *  Randomizes the specified area of the virtual display.
+ *  The area will contain random pixels and colours.
+ *
+ *  @param [context]  Context into which to draw.
+ *
+ *  @param [line]     Starting line number, a number from 0 to LINES-1.
+ *                    The starting line is at the top of the display.
+ *
+ *  @param [col]      Starting column number, a number from 0 to COLUMNS-1.
+ *                    The starting column is at the left of the display.
+ *
+ *  @param [lines]    The height of the area to update, from 1 to LINES.
+ *                    Any areas out of the display area will be ignored.
+ *
+ *  @param [colc]     The width of the area to update, from 1 to COLUMNS.
+ */
+function randomizeArea(line, col, lines, cols) {
+    //
+    const randomByte = () => Math.floor(Math.random() * 256);
+    //
+    // randomize the colour attributes
+    for (let l = line; l < (line + lines) && l < LINES; l++)
+        for (let c = col; c < (col + cols) && c < COLUMNS; c++)
+            displayColours[l * COLUMNS + c] = randomByte();
+    //
+    // randomize the pixels
+    for (let l = line; l < (line + lines) && l < LINES; l++)
+        for (let c = col; c < (col + cols) && c < COLUMNS; c++)
+            for (b = 0; b < CHARSIZE; b++)
+                displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte();
 }
 
 // -----------------------------------------------------------------------------
