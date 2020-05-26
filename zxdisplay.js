@@ -980,6 +980,10 @@ const CHARSET = new Uint8ClampedArray([
 my.ink = my.BLACK;
 my.paper = my.WHITE;
 
+// virtual display memory:
+let displayPixels = new Uint8ClampedArray(PIXEL_BYTES);
+let displayColours = new Uint8ClampedArray(COLOUR_BYTES);
+
 // -----------------------------------------------------------------------------
 // # Context Method
 
