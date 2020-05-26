@@ -17,6 +17,10 @@
 //   drawText(context, line, col, text)
 //   randomizeArea(line, col, lines, cols)
 //
+// # Display Update Methods
+//   update(_)
+//   updateArea(context, line, col, lines, cols)
+//
 // # ZXDisplay End
 //
 // # Loader
@@ -68,7 +72,9 @@ const my = {
     drawChar: drawChar,
     drawCharset: drawCharset,
     drawText: drawText,
-    randomizeArea: randomizeArea
+    randomizeArea: randomizeArea,
+    update: update,
+    updateArea: updateArea
 };
 
 // -----------------------------------------------------------------------------
@@ -1129,6 +1135,73 @@ function randomizeArea(line, col, lines, cols) {
         for (let c = col; c < (col + cols) && c < COLUMNS; c++)
             for (b = 0; b < CHARSIZE; b++)
                 displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte();
+}
+
+// -----------------------------------------------------------------------------
+// # Display Update Methods
+
+/** update():
+ *  Updates the canvas with the changes in virtual display memory.
+ */
+function update(_) {
+    this.updateArea(this.context(), 0, 0, LINES, COLUMNS);
+}
+
+/** updateArea():
+ *  Updates the specified area of the canvas
+ *  with changes in the virtual display memory.
+ *
+ *  @param [context]  Context into which to draw.
+ *
+ *  @param [line]     Starting line number, a number from 0 to LINES-1.
+ *                    The starting line is at the top of the display.
+ *
+ *  @param [col]      Starting column number, a number from 0 to COLUMNS-1.
+ *                    The starting column is at the left of the display.
+ *
+ *  @param [line]     The height of the area to update, from 1 to LINES.
+ *                    Any areas out of the display area will be ignored.
+ *
+ *  @param [col]      The width of the area to update, from 1 to COLUMNS.
+ */
+function updateArea(context, line, col, lines, cols) {
+    if (lines < 1 || cols < 1)
+        return;
+    //
+    let attr   = 0;
+    let bright = false;
+    let inkI   = 0;
+    let paperI = 0;
+    let inkV   = "";
+    let paperV = "";
+    //
+    for (let l = line; l < (line + lines) && l < LINES; l++)
+        for (let c = col; c < (col + cols) && c < COLUMNS; c++) {
+            //
+            attr   = displayColours[l * COLUMNS + c];
+            bright = (attr & 0x40) > 0;    // 0x40 = b01000000
+            inkI   = (attr & 0x07);        // 0x07 = b00000111
+            paperI = (attr & 0x38) >>> 3;  // 0x38 = b00111000
+            inkV   = bright ? BRIGHT_COLOURS[inkI]   : NORMAL_COLOURS[inkI];
+            paperV = bright ? BRIGHT_COLOURS[paperI] : NORMAL_COLOURS[paperI];
+            //
+            for (n = 0; n < CHARSIZE; n++) {
+                const byte = displayPixels[(l * 8 + n) * COLUMNS + c];
+                for (let bit = 0; bit < 8; bit++) {
+                    const isInk = (byte & Math.pow(2, 8 - bit)) > 0;
+                    context.fillStyle = isInk ? inkV : paperV;
+                    context.fillRect(
+                        (c * CHARSIZE + bit) * SCALE,
+                        (l * CHARSIZE + n) * SCALE,
+                        SCALE, SCALE
+                    );
+                }
+            }
+        }
+    //
+    // x and y specify the top left corner of the character on the display
+    const x = col  * CHARSIZE * SCALE;
+    const y = line * CHARSIZE * SCALE;
 }
 
 // -----------------------------------------------------------------------------
