@@ -1045,7 +1045,9 @@ return my;
 // -----------------------------------------------------------------------------
 // # Loader
 
-window.addEventListener("load", drawAll, false);
+window.addEventListener("load", () => {
+    setTimeout(() => { drawAll(); }, 50);
+}, false);
 
 function drawAll() {
     const canvas = document.getElementById("zx_canvas");
