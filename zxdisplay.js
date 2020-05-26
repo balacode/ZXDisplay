@@ -53,6 +53,12 @@ const my = {
     BRYELLOW:  "#FFFF00",
     BRWHITE:   "#FFFFFF",
 
+    // Constants:
+    COLUMNS: COLUMNS,
+    LINES: LINES,
+    XMAX: XMAX,
+    YMAX: YMAX,
+
     // Public Methods:
     clearScreenDithered: clearScreenDithered,
     drawChar: drawChar,
@@ -65,6 +71,33 @@ const my = {
 
 const CHARSIZE = 8; // each character is 8 pixels high and wide
 const SCALE = 3;    // one Spectrum pixel is so many pixels on modern displays
+
+const COLOUR_BYTES = COLUMNS * LINES;
+const PIXEL_BYTES = XMAX * YMAX / 8;  // 8 pixels per byte
+
+// Array to map normal colour indexes to values
+const NORMAL_COLOURS = [
+    my.BLACK,
+    my.BLUE,
+    my.RED,
+    my.MAGENTA,
+    my.GREEN,
+    my.CYAN,
+    my.YELLOW,
+    my.WHITE
+];
+
+// Array to map bright colour indexes to values
+const BRIGHT_COLOURS = [
+    my.BLACK,
+    my.BRBLUE,
+    my.BRRED,
+    my.BRMAGENTA,
+    my.BRGREEN,
+    my.BRCYAN,
+    my.BRYELLOW,
+    my.BRWHITE
+];
 
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
