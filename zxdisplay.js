@@ -67,6 +67,9 @@ const my = {
     XMAX: XMAX,
     YMAX: YMAX,
 
+    // Public Property:
+    context: context,
+
     // Public Methods:
     clearScreenDithered: clearScreenDithered,
     drawChar: drawChar,
