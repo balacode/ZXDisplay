@@ -7,6 +7,9 @@
 // # Internal Constants
 // # Display State
 //
+// # Context Method
+//   context(canvasId)
+//
 // # Drawing Methods
 //   clearScreenDithered(context)
 //   drawChar(context, line, col, ch)
@@ -976,6 +979,22 @@ const CHARSET = new Uint8ClampedArray([
 
 my.ink = my.BLACK;
 my.paper = my.WHITE;
+
+// -----------------------------------------------------------------------------
+// # Context Method
+
+/** context():
+ *
+ *  @param [canvasId]  Optional canvas element ID to use.
+ *
+ *  @return  The context used to draw on the canvas.
+ */
+function context(canvasId) {
+    let id = canvasId || "zx_canvas";
+    let canvas = document.getElementById(id);
+    let context = canvas.getContext("2d");
+    return context;
+}
 
 // -----------------------------------------------------------------------------
 // # Drawing Methods
