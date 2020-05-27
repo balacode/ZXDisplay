@@ -89,6 +89,31 @@ const SCALE = 3;    // one Spectrum pixel is so many pixels on modern displays
 const COLOUR_BYTES = COLUMNS * LINES;
 const PIXEL_BYTES = XMAX * YMAX / 8;  // 8 pixels per byte
 
+// Maps ZX Spectrum colour indexes to 4-byte RGBA pixels used on the canvas
+// (add 8 to the colour index to get the bright colour value)
+const COLOUR_PIXELS = [
+    //
+    // Normal Colours:     R     G     B     ALPHA
+    new Uint8ClampedArray([0x00, 0x00, 0x00, 0xFF]),  // 0  BLACK
+    new Uint8ClampedArray([0x00, 0x00, 0xD7, 0xFF]),  // 1  BLUE
+    new Uint8ClampedArray([0xD7, 0x00, 0x00, 0xFF]),  // 2  RED
+    new Uint8ClampedArray([0xD7, 0x00, 0xD7, 0xFF]),  // 3  MAGENTA
+    new Uint8ClampedArray([0x00, 0xD7, 0x00, 0xFF]),  // 4  GREEN
+    new Uint8ClampedArray([0x00, 0xD7, 0xD7, 0xFF]),  // 5  CYAN
+    new Uint8ClampedArray([0xD7, 0xD7, 0x00, 0xFF]),  // 6  YELLOW
+    new Uint8ClampedArray([0xD7, 0xD7, 0xD7, 0xFF]),  // 7  WHITE
+    //
+    // Bright Colours:     R     G     B     ALPHA
+    new Uint8ClampedArray([0x00, 0x00, 0x00, 0xFF]),  //  8 (8+0) BLACK
+    new Uint8ClampedArray([0x00, 0x00, 0xFF, 0xFF]),  //  9 (8+1) BRBLUE
+    new Uint8ClampedArray([0xFF, 0x00, 0x00, 0xFF]),  // 10 (8+2) BRRED
+    new Uint8ClampedArray([0xFF, 0x00, 0xFF, 0xFF]),  // 11 (8+3) BRMAGENTA
+    new Uint8ClampedArray([0x00, 0xFF, 0x00, 0xFF]),  // 12 (8+4) BRGREEN
+    new Uint8ClampedArray([0x00, 0xFF, 0xFF, 0xFF]),  // 13 (8+5) BRCYAN
+    new Uint8ClampedArray([0xFF, 0xFF, 0x00, 0xFF]),  // 14 (8+6) BRYELLOW
+    new Uint8ClampedArray([0xFF, 0xFF, 0xFF, 0xFF])   // 15 (8+7) BRWHITE
+];
+
 // Array to map normal colour indexes to values
 const NORMAL_COLOURS = [
     my.BLACK,
