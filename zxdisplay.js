@@ -24,17 +24,18 @@
 // # ZXDisplay End
 //
 // # Loader
+//   drawAll()
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay Object:
 
-const ZXDisplay = (function() {
+const ZXDisplay = (() => {
 
 // Display resolution:
-const COLUMNS = 32; // number of text columns (and horizontal colour attributes)
-const LINES = 24;   // number of text lines (and vertical colour attributes)
-const XMAX = 256;   // horizontal resolution
-const YMAX = 192;   // vertical resolution
+const COLUMNS = 32;  // number of text columns (& horizontal colour attributes)s
+const LINES = 24;    // number of text lines (and vertical colour attributes)
+const XMAX = 256;    // horizontal resolution
+const YMAX = 192;    // vertical resolution
 
 const my = {
 
@@ -78,13 +79,13 @@ const my = {
     randomizeArea: randomizeArea,
     update: update,
     updateArea: updateArea
-};
+}; //                                                                         my
 
 // -----------------------------------------------------------------------------
 // # Internal Constants
 
-const CHARSIZE = 8; // each character is 8 pixels high and wide
-const SCALE = 3;    // one Spectrum pixel is so many pixels on modern displays
+const CHARSIZE = 8;  // each character is 8 pixels high and wide
+const SCALE = 3;     // one Spectrum pixel is so many pixels on modern displays
 
 const COLOUR_BYTES = COLUMNS * LINES;
 const PIXEL_BYTES = XMAX * YMAX / 8;  // 8 pixels per byte
@@ -1034,7 +1035,7 @@ function context(canvasId) {
     let canvas = document.getElementById(id);
     let context = canvas.getContext("2d");
     return context;
-}
+} //                                                                     context
 
 // -----------------------------------------------------------------------------
 // # Drawing Methods
@@ -1055,7 +1056,7 @@ function clearScreenDithered(context) {
             context.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
         }
     }
-}
+} //                                                         clearScreenDithered
 
 /** drawChar():
  *  Draws a single character at the specified line and column.
@@ -1090,7 +1091,7 @@ function drawChar(context, line, col, ch) {
             context.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
         }
     }
-}
+} //                                                                    drawChar
 
 /** drawCharset():
  *  Draws the entire character set at the bottom of the screen.
@@ -1104,7 +1105,7 @@ function drawCharset(context) {
     for (let ch = 0x20; ch <= 0x7F; ch++)
         chars += String.fromCharCode(ch);
     drawText(context, 21, 0, chars);
-}
+} //                                                                 drawCharset
 
 /** drawText():
  *  Draws a string of text starting from the specified position.
@@ -1130,7 +1131,7 @@ function drawText(context, line, col, text) {
             line++;
         }
     }
-}
+} //                                                                    drawText
 
 /** randomizeArea():
  *  Randomizes the specified area of the virtual display.
@@ -1163,7 +1164,7 @@ function randomizeArea(line, col, lines, cols) {
         for (let c = col; c < (col + cols) && c < COLUMNS; c++)
             for (b = 0; b < CHARSIZE; b++)
                 displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte();
-}
+} //                                                               randomizeArea
 
 // -----------------------------------------------------------------------------
 // # Display Update Methods
@@ -1173,7 +1174,7 @@ function randomizeArea(line, col, lines, cols) {
  */
 function update(_) {
     this.updateArea(this.context(), 0, 0, LINES, COLUMNS);
-}
+} //                                                                      update
 
 /** updateArea():
  *  Updates the specified area of the canvas
@@ -1226,11 +1227,7 @@ function updateArea(context, line, col, lines, cols) {
                 }
             }
         }
-    //
-    // x and y specify the top left corner of the character on the display
-    const x = col  * CHARSIZE * SCALE;
-    const y = line * CHARSIZE * SCALE;
-}
+} //                                                                  updateArea
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay End
@@ -1277,6 +1274,6 @@ function drawAll() {
         c.timeEnd("charset");
     }
     c.timeEnd("drawAll()");
-}
+} //                                                                     drawAll
 
 //end
