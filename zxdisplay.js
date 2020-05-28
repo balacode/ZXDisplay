@@ -15,7 +15,7 @@
 //
 // # Drawing Methods
 //   clearScreenDithered()
-//   drawChar(context, line, col, ch)
+//   drawChar(line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
 //   randomizeArea(line, col, lines, cols)
@@ -1046,35 +1046,31 @@ function clearScreenDithered() {
 /** drawChar():
  *  Draws a single character at the specified line and column.
  *
- *  @param [context]  Context into which to draw.
+ *  @param [line]  Line number, a number from 0 to LINES-1.
+ *                 The starting line is at the top of the display.
  *
- *  @param [line]     Line number, a number from 0 to LINES-1.
- *                    The starting line is at the top of the display.
+ *  @param [col]   Column number, a number from 0 to COLUMNS-1.
+ *                 The starting column is at the left of the display.
  *
- *  @param [col]      Column number, a number from 0 to COLUMNS-1.
- *                    The starting column is at the left of the display.
- *
- *  @param [ch]       The character to draw, as a string.
- *                    Only the first character of the string is used.
+ *  @param [ch]    The character to draw, as a string.
+ *                 Only the first character of the string is used.
  */
-function drawChar(context, line, col, ch) {
+function drawChar(line, col, ch) {
+    if (line < 0 || line >= LINES || col < 0 || col >= COLUMNS)
+        return;
     //
-    // x and y specify the top left corner of the character on the display
-    const x = col  * CHARSIZE * SCALE;
-    const y = line * CHARSIZE * SCALE;
+    // attributes
+    const a = line * COLUMNS + col;
+    const attr = makeAttribute(my.ink, my.paper);
+    displayColours[a] = attr;
     //
     // index of the first byte of the character in the character set
-    const ci = (ch.charCodeAt(0) - 0x20) * CHARSIZE;
+    const chAt = (ch.charCodeAt(0) - 0x20) * CHARSIZE;
     //
-    // fetch each of the bytes of the character
-    for (let iy = 0; iy < CHARSIZE; iy++) {
-        const offset = ci + iy;
-        const byte = CHARSET[offset];
-        for (let ix = 0; ix < 8; ix++) {
-            const isInk = (Math.pow(2, 8 - ix) & byte) > 0;
-            context.fillStyle = isInk ? my.ink : my.paper;
-            context.fillRect(x + ix * SCALE, y + iy * SCALE, SCALE, SCALE);
-        }
+    // copy pixel data
+    for (let i = 0; i < CHARSIZE; i++) {
+        const at = (line * CHARSIZE + i) * COLUMNS + col;
+        displayPixels[at] = CHARSET[chAt + i];
     }
 } //                                                                    drawChar
 
@@ -1110,7 +1106,7 @@ function drawCharset(context) {
 function drawText(context, line, col, text) {
     const length = text.length;
     for (let i = 0; i < length && line < LINES; i++) {
-        drawChar(context, line, col, text.charAt(i));
+        drawChar(line, col, text.charAt(i));
         if (++col >= COLUMNS) {
             col = 0;
             line++;
@@ -1345,19 +1341,19 @@ function drawAll() {
         d.randomizeArea(0, 0, lines, d.COLUMNS);
         c.timeEnd("randomizeArea()");
     }
+    // draw the character set (at bottom)
+    if (true) {
+        c.time("drawCharset()");
+        d.paper = d.MAGENTA;
+        d.ink = d.BRWHITE;
+        d.drawCharset(context);
+        c.timeEnd("drawCharset()");
+    }
     // draw the virutal display on the canvas
     c.time("update()");
     d.update();
     c.timeEnd("update()");
     //
-    // draw the character set (at bottom)
-    if (true) {
-        c.time("drawCharset()");
-        d.paper = "#D700D7";  // magenta
-        d.ink = "#FFFFFF";    // bright white
-        d.drawCharset(context);
-        c.timeEnd("drawCharset()");
-    }
     c.timeEnd("drawAll()");
 } //                                                                     drawAll
 
