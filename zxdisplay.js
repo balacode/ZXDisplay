@@ -1282,29 +1282,31 @@ function drawAll() {
     //
     // clear the screen with a dithered background
     if (true) {
-        c.time("cls");
-        d.paper = d.BRYELLOW;
+        c.time("clearScreenDithered()");
+        d.paper = d.BLUE;
         d.ink = d.BLACK;
         d.clearScreenDithered(context);
-        c.timeEnd("cls");
+        c.timeEnd("clearScreenDithered()");
     }
     // draw a random strip (at top)
     if (true) {
-        c.time("randomize");
-        d.randomizeArea(0, 0, 3, d.COLUMNS);
-        c.timeEnd("randomize");
+        const lines = 3;
         //
-        c.time("draw_random");
-        d.updateArea(context, 0, 0, 3, d.COLUMNS);
-        c.timeEnd("draw_random");
+        c.time("randomizeArea()");
+        d.randomizeArea(0, 0, lines, d.COLUMNS);
+        c.timeEnd("randomizeArea()");
+        //
+        c.time("updateArea()");
+        d.updateArea(context, 0, 0, lines, d.COLUMNS);
+        c.timeEnd("updateArea()");
     }
     // draw the character set (at bottom)
     if (true) {
-        c.time("charset");
-        d.paper = d.RED;
+        c.time("drawCharset()");
+        d.paper = d.MAGENTA;
         d.ink = d.BRWHITE;
         d.drawCharset(context);
-        c.timeEnd("charset");
+        c.timeEnd("drawCharset()");
     }
     c.timeEnd("drawAll()");
 } //                                                                     drawAll
