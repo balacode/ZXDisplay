@@ -16,7 +16,7 @@
 // # Drawing Methods
 //   clearScreenDithered()
 //   drawChar(line, col, ch)
-//   drawCharset(context)
+//   drawCharset()
 //   drawText(line, col, text)
 //   randomizeArea(line, col, lines, cols)
 //
@@ -1078,10 +1078,8 @@ function drawChar(line, col, ch) {
  *  Draws the entire character set at the bottom of the screen.
  *  This method exists so we can visually check that the
  *  system character set in renders properly.
- *
- *  @param [context]  Context into which to draw.
  */
-function drawCharset(context) {
+function drawCharset() {
     let chars = "";
     for (let ch = 0x20; ch <= 0x7F; ch++)
         chars += String.fromCharCode(ch);
@@ -1320,7 +1318,6 @@ window.addEventListener("load", () => {
 function drawAll() {
     const c = console;
     c.time("drawAll()");
-    let context = ZXDisplay.context();
     const d = ZXDisplay;
     //
     // clear the screen with a dithered background
@@ -1344,7 +1341,7 @@ function drawAll() {
         c.time("drawCharset()");
         d.paper = d.MAGENTA;
         d.ink = d.BRWHITE;
-        d.drawCharset(context);
+        d.drawCharset();
         c.timeEnd("drawCharset()");
     }
     // draw the virutal display on the canvas
