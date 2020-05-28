@@ -1173,7 +1173,19 @@ function updateArea(context, line, col, lines, cols) {
     if (lines < 1 || cols < 1)
         return;
     //
+    // set timing to TRUE to output timing details to the console
+    const TIMING    = false
+    const doNothing = (s) => {};
+    const time      = TIMING ? (s) => {
+                        console.time(`updateArea() ${s}`);
+                      } : doNothing;
+    const timeEnd   = TIMING ? (s) => {
+                        console.timeEnd(`updateArea() ${s}`);
+                      } : doNothing;
+    //
     // create temporary structures
+    time("TOTAL");
+    time("init");
     const REALSIZE = CHARSIZE * SCALE;
     const x = col  * REALSIZE; // left corner of the block to display
     const y = line * REALSIZE; // top   "  "
@@ -1182,9 +1194,11 @@ function updateArea(context, line, col, lines, cols) {
     let paperPx = new Uint8ClampedArray(4 * SCALE);  // 4 bytes for RGBA
     let inkPx = new Uint8ClampedArray(4 * SCALE);
     let prevAttr = 0;
+    timeEnd("init");
     //
     // translate the data in displayColours and displayPixels
     // to RGBA 4-byte grid of pixels in ImageData (img).
+    time("fill");
     for (let l = line; l < (line + lines) && l < LINES; l++)
         for (let c = col; c < (col + cols) && c < COLUMNS; c++) {
             //
@@ -1228,8 +1242,10 @@ function updateArea(context, line, col, lines, cols) {
         }
     // copy the first line of physical pixels down so that each
     // virtual pixel is SCALE physical pixels high on the canvas.
+    timeEnd("fill");
     //
     const BPL = 4 * XMAX * SCALE; // real bytes per line on canvas
+    time("copy");
     const length = img.data.length;
     for (let i = 0; i < length; i += BPL * SCALE) {
         const start = i;
@@ -1238,7 +1254,12 @@ function updateArea(context, line, col, lines, cols) {
             img.data.copyWithin(i + BPL * j, start, end);
     }
     // finally, write the rendered image data to the canvas
+    timeEnd("copy");
+    //
+    time("putd");
     context.putImageData(img, x, y);
+    timeEnd("putd");
+    timeEnd("TOTAL");
 } //                                                                  updateArea
 
 // -----------------------------------------------------------------------------
