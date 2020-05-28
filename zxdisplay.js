@@ -3,6 +3,9 @@
 // (c) balarabe@protonmail.com                                      License: MIT
 // -----------------------------------------------------------------------------
 
+// Note: flashing attributes are not supported, because flashing is
+// evil and I don't want to give anyone seizures by any chance.
+
 // # ZXDisplay Object:
 // # Internal Constants
 // # Display State
@@ -35,7 +38,7 @@
 const ZXDisplay = (() => {
 
 // Display resolution:
-const COLUMNS = 32;  // number of text columns (& horizontal colour attributes)s
+const COLUMNS = 32;  // number of text columns (& horizontal colour attributes)
 const LINES = 24;    // number of text lines (and vertical colour attributes)
 const XMAX = 256;    // horizontal resolution
 const YMAX = 192;    // vertical resolution
