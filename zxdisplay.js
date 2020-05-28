@@ -17,7 +17,7 @@
 //   clearScreenDithered()
 //   drawChar(line, col, ch)
 //   drawCharset(context)
-//   drawText(context, line, col, text)
+//   drawText(line, col, text)
 //   randomizeArea(line, col, lines, cols)
 //
 // # Display Update Methods
@@ -1085,15 +1085,13 @@ function drawCharset(context) {
     let chars = "";
     for (let ch = 0x20; ch <= 0x7F; ch++)
         chars += String.fromCharCode(ch);
-    drawText(context, 21, 0, chars);
+    drawText(21, 0, chars);
 } //                                                                 drawCharset
 
 /** drawText():
  *  Draws a string of text starting from the specified position.
  *  If the text spills past the last column, continues the text
  *  on the next line from the first column.
- *
- *  @param [context]  Context into which to draw.
  *
  *  @param [line]     Line number, a number from 0 to LINES-1.
  *                    The starting line is at the top of the display.
@@ -1103,7 +1101,7 @@ function drawCharset(context) {
  *
  *  @param [ch]       The string to draw.
  */
-function drawText(context, line, col, text) {
+function drawText(line, col, text) {
     const length = text.length;
     for (let i = 0; i < length && line < LINES; i++) {
         drawChar(line, col, text.charAt(i));
