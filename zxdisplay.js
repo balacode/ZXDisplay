@@ -44,23 +44,24 @@ const my = {
     // These are the 15 colours the ZX Spectrum can display:
     //
     // Normal Colours:
-    BLACK:     "#000000",
-    BLUE:      "#0000D7",
-    RED:       "#D70000",
-    MAGENTA:   "#D700D7",
-    GREEN:     "#00D700",
-    CYAN:      "#00D7D7",
-    YELLOW:    "#D7D700",
-    WHITE:     "#D7D7D7",
+    BLACK:     0,
+    BLUE:      1,
+    RED:       2,
+    MAGENTA:   3,
+    GREEN:     4,
+    CYAN:      5,
+    YELLOW:    6,
+    WHITE:     7,
     //
     // Bright Colours:
-    BRBLUE:    "#0000FF",
-    BRRED:     "#FF0000",
-    BRMAGENTA: "#FF00FF",
-    BRGREEN:   "#00FF00",
-    BRCYAN:    "#00FFFF",
-    BRYELLOW:  "#FFFF00",
-    BRWHITE:   "#FFFFFF",
+    //         8            <- unused: bright black is same as black
+    BRBLUE:    9,
+    BRRED:     10,
+    BRMAGENTA: 11,
+    BRGREEN:   12,
+    BRCYAN:    13,
+    BRYELLOW:  14,
+    BRWHITE:   15,
 
     // Constants:
     COLUMNS: COLUMNS,
@@ -1283,8 +1284,8 @@ function drawAll() {
     // clear the screen with a dithered background
     if (true) {
         c.time("clearScreenDithered()");
-        d.paper = d.BLUE;
-        d.ink = d.BLACK;
+        d.paper = "#0000D7";  // blue
+        d.ink = "#000000";    // black
         d.clearScreenDithered(context);
         c.timeEnd("clearScreenDithered()");
     }
@@ -1303,8 +1304,8 @@ function drawAll() {
     // draw the character set (at bottom)
     if (true) {
         c.time("drawCharset()");
-        d.paper = d.MAGENTA;
-        d.ink = d.BRWHITE;
+        d.paper = "#D700D7";  // magenta
+        d.ink = "#FFFFFF";    // bright white
         d.drawCharset(context);
         c.timeEnd("drawCharset()");
     }
