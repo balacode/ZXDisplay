@@ -30,8 +30,9 @@
 //
 // # ZXDisplay End
 //
-// # Loader
-//   drawAll()
+// # Loader and Demos
+//   main()
+//   drawDemo1()
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay Object:
@@ -1358,15 +1359,19 @@ return my;
 })();
 
 // -----------------------------------------------------------------------------
-// # Loader
+// # Loader and Demos
 
 window.addEventListener("load", () => {
-    setTimeout(() => { drawAll(); }, 50);
+    setTimeout(() => { main(); }, 50);
 }, false);
 
-function drawAll() {
+function main() {
+    drawDemo1();
+} //                                                                        main
+
+function drawDemo1() {
     const c = console;
-    c.time("drawAll()");
+    c.time("drawDemo1()");
     const d = ZXDisplay;
     //
     // clear the screen with a dithered background
@@ -1406,7 +1411,7 @@ function drawAll() {
     d.update();
     c.timeEnd("update()");
     //
-    c.timeEnd("drawAll()");
-} //                                                                     drawAll
+    c.timeEnd("drawDemo1()");
+} //                                                                   drawDemo1
 
 //end
