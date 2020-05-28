@@ -1387,6 +1387,14 @@ function drawAll() {
         d.randomizeArea(0, 0, lines, d.COLUMNS);
         c.timeEnd("randomizeArea()");
     }
+    // draw a random strip (at center)
+    if (true) {
+        const lines = 3;
+        //
+        c.time("randomizeAreaX()");
+        d.randomizeAreaX(10, 0, lines, d.COLUMNS);
+        c.timeEnd("randomizeAreaX()");
+    }
     // draw the character set (at bottom)
     if (true) {
         c.time("drawCharset()");
