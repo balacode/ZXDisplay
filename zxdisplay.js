@@ -21,7 +21,7 @@
 //   randomizeArea(line, col, lines, cols)
 //
 // # Display Update Methods
-//   update(_)
+//   update(context)
 //   updateArea(context, line, col, lines, cols)
 //
 // # Helper Method
@@ -1148,9 +1148,12 @@ function randomizeArea(line, col, lines, cols) {
 
 /** update():
  *  Updates the canvas with the changes in virtual display memory.
+ *
+ *  @param [context]  Optional context into which to draw.
  */
-function update(_) {
-    this.updateArea(this.context(), 0, 0, LINES, COLUMNS);
+function update(context) {
+    const c = context || this.context();
+    this.updateArea(c, 0, 0, LINES, COLUMNS);
 } //                                                                      update
 
 /** updateArea():
