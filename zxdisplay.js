@@ -21,6 +21,9 @@
 //   update(_)
 //   updateArea(context, line, col, lines, cols)
 //
+// # Helper Method
+//   makeAttribute(ink, paper)
+//
 // # ZXDisplay End
 //
 // # Loader
@@ -1262,6 +1265,46 @@ function updateArea(context, line, col, lines, cols) {
     timeEnd("putd");
     timeEnd("TOTAL");
 } //                                                                  updateArea
+
+// -----------------------------------------------------------------------------
+// # Helper Method
+
+/** makeAttribute():
+ *  Creates a colour attribute value which combines the paper and ink colours.
+ *
+ *  If either the given ink or paper colour is grater than 7,
+ *  then the whole attribute will be set to bright mode.
+ *
+ *  @param [ink]    The ink (foreground) colour, which can range from 0 to 15.
+ *                  One of the constants BLACK, BLUE, RED, MAGENTA, GREEN,
+ *                  CYAN, YELLOW, WHITE or their bright counterparts.
+ *
+ *  @param [paper]  The paper (background) colour,
+ *                  which can range from 0 to 15.
+ */
+function makeAttribute(ink, paper) {
+    const isBright =
+            ink > 7 || paper > 7;
+    const brightOffset =
+            isBright ? 8 : 0;
+    const inkBits =
+            brightOffset +
+            ink < 0  ? BLACK :
+            ink > 15 ? WHITE :
+            ink > 7  ? ink - 8 :
+            ink;
+    const paperBits =
+            brightOffset +
+            paper < 0  ? BLACK :
+            paper > 15 ? WHITE :
+            paper > 7  ? paper - 8 :
+            paper;
+    const brightBit =
+            isBright ? 0b01_000_000 : 0;
+    const ret =
+            brightBit | (paperBits << 3) | inkBits;
+    return ret;
+} //                                                               makeAttribute
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay End
