@@ -1160,7 +1160,7 @@ function update(context) {
  *  Updates the specified area of the canvas
  *  with changes in the virtual display memory.
  *
- *  @param [context]  Context into which to draw.
+ *  @param [context]  Optional context into which to draw.
  *
  *  @param [line]     Starting line number, a number from 0 to LINES-1.
  *                    The starting line is at the top of the display.
@@ -1193,7 +1193,8 @@ function updateArea(context, line, col, lines, cols) {
     const REALSIZE = CHARSIZE * SCALE;
     const x = col  * REALSIZE; // left corner of the block to display
     const y = line * REALSIZE; // top   "  "
-    const img = context.createImageData(cols * REALSIZE, lines * REALSIZE);
+    const ctx = context || this.context();
+    const img = ctx.createImageData(cols * REALSIZE, lines * REALSIZE);
     const BITS = new Uint8ClampedArray([128, 64, 32, 16, 8, 4, 2, 1]);
     let paperPx = new Uint8ClampedArray(4 * SCALE);  // 4 bytes for RGBA
     let inkPx = new Uint8ClampedArray(4 * SCALE);
@@ -1261,7 +1262,7 @@ function updateArea(context, line, col, lines, cols) {
     timeEnd("copy");
     //
     time("putd");
-    context.putImageData(img, x, y);
+    ctx.putImageData(img, x, y);
     timeEnd("putd");
     timeEnd("TOTAL");
 } //                                                                  updateArea
