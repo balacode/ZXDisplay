@@ -19,6 +19,7 @@
 //   drawCharset()
 //   drawText(line, col, text)
 //   randomizeArea(line, col, lines, cols)
+//   randomizeAreaX(line, col, lines, cols)
 //
 // # Display Update Methods
 //   update(context)
@@ -84,6 +85,7 @@ const my = {
     drawCharset: drawCharset,
     drawText: drawText,
     randomizeArea: randomizeArea,
+    randomizeAreaX: randomizeAreaX,
     update: update,
     updateArea: updateArea
 }; //                                                                         my
@@ -1142,6 +1144,51 @@ function randomizeArea(line, col, lines, cols) {
             for (b = 0; b < CHARSIZE; b++)
                 displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte();
 } //                                                               randomizeArea
+
+/** randomizeAreaX():
+ *  Randomizes the specified area of the virtual display.
+ *  The area will contain random pixels and colours along the X-axis.
+ *
+ *  @param [line]   Starting line number, a number from 0 to LINES-1.
+ *                  The starting line is at the top of the display.
+ *
+ *  @param [col]    Starting column number, a number from 0 to COLUMNS-1.
+ *                  The starting column is at the left of the display.
+ *
+ *  @param [lines]  The height of the area to update, from 1 to LINES.
+ *                  Any areas out of the display area will be ignored.
+ *
+ *  @param [cols]   The width of the area to update, from 1 to COLUMNS.
+ */
+function randomizeAreaX(line, col, lines, cols) {
+    //
+    const colEnd = Math.min(col + cols, COLUMNS);
+    const randomByte = () => Math.floor(Math.random() * 256);
+    //
+    // randomize the colour attributes on one line
+    for (let c = col; c < colEnd; c++)
+        displayColours[line * COLUMNS + c] = randomByte();
+    //
+    // copy colour attributes to following lines
+    for (let l = (line + 1) * COLUMNS + col,
+             lineEnd = Math.min(line + lines, LINES);
+         l < lineEnd * COLUMNS;
+         l += COLUMNS
+    ) {
+        const start = line * COLUMNS + col;
+        const end = start + cols;
+        displayColours.copyWithin(l, start, end);
+    }
+    // create some random pixels
+    const y0 = line * COLUMNS * CHARSIZE;
+    for (let c = col; c < colEnd; c++)
+        displayPixels[y0 + c] = randomByte();
+    //
+    // copy the random pixels to other lines
+    const yEnd = Math.min(line + lines, LINES) * COLUMNS * CHARSIZE;
+    for (let y = y0 + COLUMNS + col; y < yEnd; y += COLUMNS)
+        displayPixels.copyWithin(y, y0 + col, y0 + colEnd);
+} //                                                              randomizeAreaX
 
 // -----------------------------------------------------------------------------
 // # Display Update Methods
