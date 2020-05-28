@@ -115,30 +115,6 @@ const COLOUR_PIXELS = [
     new Uint8ClampedArray([0xFF, 0xFF, 0xFF, 0xFF])   // 15 (8+7) BRWHITE
 ];
 
-// Array to map normal colour indexes to values
-const NORMAL_COLOURS = [
-    my.BLACK,
-    my.BLUE,
-    my.RED,
-    my.MAGENTA,
-    my.GREEN,
-    my.CYAN,
-    my.YELLOW,
-    my.WHITE
-];
-
-// Array to map bright colour indexes to values
-const BRIGHT_COLOURS = [
-    my.BLACK,
-    my.BRBLUE,
-    my.BRRED,
-    my.BRMAGENTA,
-    my.BRGREEN,
-    my.BRCYAN,
-    my.BRYELLOW,
-    my.BRWHITE
-];
-
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
 // Each byte/line represents a row of pixels of the character.
@@ -1197,36 +1173,72 @@ function updateArea(context, line, col, lines, cols) {
     if (lines < 1 || cols < 1)
         return;
     //
-    let attr   = 0;
-    let bright = false;
-    let inkI   = 0;
-    let paperI = 0;
-    let inkV   = "";
-    let paperV = "";
+    // create temporary structures
+    const REALSIZE = CHARSIZE * SCALE;
+    const x = col  * REALSIZE; // left corner of the block to display
+    const y = line * REALSIZE; // top   "  "
+    const img = context.createImageData(cols * REALSIZE, lines * REALSIZE);
+    const BITS = new Uint8ClampedArray([128, 64, 32, 16, 8, 4, 2, 1]);
+    let paperPx = new Uint8ClampedArray(4 * SCALE);  // 4 bytes for RGBA
+    let inkPx = new Uint8ClampedArray(4 * SCALE);
+    let prevAttr = 0;
     //
+    // translate the data in displayColours and displayPixels
+    // to RGBA 4-byte grid of pixels in ImageData (img).
     for (let l = line; l < (line + lines) && l < LINES; l++)
         for (let c = col; c < (col + cols) && c < COLUMNS; c++) {
             //
-            attr   = displayColours[l * COLUMNS + c];
-            bright = (attr & 0x40) > 0;    // 0x40 = b01000000
-            inkI   = (attr & 0x07);        // 0x07 = b00000111
-            paperI = (attr & 0x38) >>> 3;  // 0x38 = b00111000
-            inkV   = bright ? BRIGHT_COLOURS[inkI]   : NORMAL_COLOURS[inkI];
-            paperV = bright ? BRIGHT_COLOURS[paperI] : NORMAL_COLOURS[paperI];
-            //
-            for (n = 0; n < CHARSIZE; n++) {
-                const byte = displayPixels[(l * 8 + n) * COLUMNS + c];
-                for (let bit = 0; bit < 8; bit++) {
-                    const isInk = (byte & Math.pow(2, 8 - bit)) > 0;
-                    context.fillStyle = isInk ? inkV : paperV;
-                    context.fillRect(
-                        (c * CHARSIZE + bit) * SCALE,
-                        (l * CHARSIZE + n) * SCALE,
-                        SCALE, SCALE
-                    );
+            // if the attribute value has changed from the previous
+            // block, update paperPx and inkPx content
+            let a = displayColours[l * COLUMNS + c];
+            if (a != prevAttr) {
+                //
+                // determine the ink and paper indexes
+                let bright = (a & 0x40) ? 8 : 0;           // 0x40 = b01000000
+                let ink    = (a & 0x07) + bright;          // 0x07 = b00000111
+                let paper  = ((a & 0x38) >>> 3) + bright;  // 0x38 = b00111000
+                //
+                // copy RGBA bytes into paperPx and inkPx (repeat to SCALE)
+                let colour = COLOUR_PIXELS[paper];
+                for (let i = 0; i < SCALE; i++)
+                    paperPx.set(colour, i * 4);
+                //
+                colour = COLOUR_PIXELS[ink];
+                for (let i = 0; i < SCALE; i++)
+                    inkPx.set(colour, i * 4);
+                //
+                prevAttr = a;
+            }
+            // draw the vertical lines of the character block
+            for (let b = 0; b < CHARSIZE; b++) {
+                const byte = displayPixels[(l * CHARSIZE + b) * COLUMNS + c];
+                for (let bit = 7; bit >= 0; bit--) {
+                    const isInk = byte & BITS[bit];
+                    const N = CHARSIZE * SCALE;
+                    const i =
+                          l   * 4 * COLUMNS * N * N +
+                          b   * 4 * COLUMNS * SCALE * N +
+                          c   * 4 * N +
+                          bit * 4 * SCALE
+                          ;
+                    const px = isInk ? inkPx : paperPx;
+                    img.data.set(px, i);
                 }
             }
         }
+    // copy the first line of physical pixels down so that each
+    // virtual pixel is SCALE physical pixels high on the canvas.
+    //
+    const BPL = 4 * XMAX * SCALE; // real bytes per line on canvas
+    const length = img.data.length;
+    for (let i = 0; i < length; i += BPL * SCALE) {
+        const start = i;
+        const end   = i + BPL - 1;
+        for (let j = 1; j < SCALE; j++)
+            img.data.copyWithin(i + BPL * j, start, end);
+    }
+    // finally, write the rendered image data to the canvas
+    context.putImageData(img, x, y);
 } //                                                                  updateArea
 
 // -----------------------------------------------------------------------------
