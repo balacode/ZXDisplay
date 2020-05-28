@@ -11,7 +11,7 @@
 //   context(canvasId)
 //
 // # Drawing Methods
-//   clearScreenDithered(context)
+//   clearScreenDithered()
 //   drawChar(context, line, col, ch)
 //   drawCharset(context)
 //   drawText(context, line, col, text)
@@ -1022,20 +1022,21 @@ function context(canvasId) {
 
 /** clearScreenDithered():
  *  Clears the screen using a mix of two colours.
- *
- *  @param [context]  Context into which to draw.
  */
-function clearScreenDithered(context) {
-    let yf = false;
-    for (let y = 0; y < YMAX; y++) {
-        yf = !yf;
-        let xf = yf;
-        for (let x = 0; x < XMAX; x++) {
-            xf = !xf;
-            context.fillStyle = xf ? my.ink : my.paper;
-            context.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
-        }
-    }
+function clearScreenDithered() {
+    //
+    // set all the attribute values
+    const attr = makeAttribute(my.ink, my.paper, false);
+    displayColours.fill(attr);
+    //
+    // fill the display with an odd pixel pattern
+    displayPixels.fill(0b01010101);
+    //
+    // fill every other line with an even pixel pattern;
+    // it is necessary to do this even/odd alternation otherwise
+    // the pixels will align into lines instead of a checkerboard
+    for (let i = 0; i < (XMAX * YMAX); i += COLUMNS * 2)
+       displayPixels.fill(0b10101010, i, i + COLUMNS);
 } //                                                         clearScreenDithered
 
 /** drawChar():
@@ -1327,9 +1328,9 @@ function drawAll() {
     // clear the screen with a dithered background
     if (true) {
         c.time("clearScreenDithered()");
-        d.paper = "#0000D7";  // blue
-        d.ink = "#000000";    // black
-        d.clearScreenDithered(context);
+        d.paper = d.BLUE;
+        d.ink = d.BLACK;
+        d.clearScreenDithered();
         c.timeEnd("clearScreenDithered()");
     }
     // draw a random strip (at top)
@@ -1339,11 +1340,12 @@ function drawAll() {
         c.time("randomizeArea()");
         d.randomizeArea(0, 0, lines, d.COLUMNS);
         c.timeEnd("randomizeArea()");
-        //
-        c.time("updateArea()");
-        d.updateArea(context, 0, 0, lines, d.COLUMNS);
-        c.timeEnd("updateArea()");
     }
+    // draw the virutal display on the canvas
+    c.time("update()");
+    d.update();
+    c.timeEnd("update()");
+    //
     // draw the character set (at bottom)
     if (true) {
         c.time("drawCharset()");
