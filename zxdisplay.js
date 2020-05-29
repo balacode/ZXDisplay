@@ -34,6 +34,7 @@
 //   main()
 //   drawDemo1()
 //   drawRandomDisplay()
+//   drawSpectrumOnCanvas()
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay Object:
@@ -1367,9 +1368,10 @@ window.addEventListener("load", () => {
 }, false);
 
 function main() {
-    setTimeout(() => { drawRandomDisplay(); },  50);
-    setTimeout(() => { drawRandomDisplay(); }, 300);
-    setTimeout(() => { drawDemo1();         }, 550);
+    setTimeout(() => { drawRandomDisplay();    }, 50);
+    setTimeout(() => { drawRandomDisplay();    }, 300);
+    setTimeout(() => { drawSpectrumOnCanvas(); }, 550);
+//  setTimeout(() => { drawDemo1();            }, 750);
 } //                                                                        main
 
 function drawDemo1() {
@@ -1437,5 +1439,39 @@ function drawRandomDisplay() {
     //
     c.timeEnd("drawRandomDisplay()");
 } //                                                           drawRandomDisplay
+
+/** drawSpectrumOnCanvas():
+ *  Draws the "Spectrum on Canvas" digital artwork:
+ *  a series of vertical bars drawn in random colours.
+ */
+function drawSpectrumOnCanvas() {
+    const d = ZXDisplay;
+    const c = console;
+    c.time("drawSpectrumOnCanvas()");
+    //
+    // draw a random strip of horizontal lines
+    c.time("randomizeArea()");
+    d.randomizeAreaX(0, 0, d.LINES, d.COLUMNS);
+    c.timeEnd("randomizeArea()");
+    //
+    // draw labels
+    c.time("labels");
+    d.paper = d.BLACK;
+    d.ink = d.BRWHITE;
+    d.drawText(0,  0, "S P E C T R U M  ON  C A N V A S");
+    d.drawText(1,  0, "                                ");
+    //
+    d.ink = d.BLUE;
+    d.drawText(22, 0, "                                ");
+    d.drawText(23, 0, "                       @ali_bala");
+    c.timeEnd("labels")
+    //
+    // draw the virutal display on the canvas
+    c.time("update()");
+    d.update();
+    c.timeEnd("update()");
+    //
+    c.timeEnd("drawSpectrumOnCanvas()");
+} //                                                        drawSpectrumOnCanvas
 
 //end
