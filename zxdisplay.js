@@ -33,6 +33,7 @@
 // # Loader and Demos
 //   main()
 //   drawDemo1()
+//   drawRandomDisplay()
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay Object:
@@ -1366,7 +1367,9 @@ window.addEventListener("load", () => {
 }, false);
 
 function main() {
-    drawDemo1();
+    setTimeout(() => { drawRandomDisplay(); },  50);
+    setTimeout(() => { drawRandomDisplay(); }, 300);
+    setTimeout(() => { drawDemo1();         }, 550);
 } //                                                                        main
 
 function drawDemo1() {
@@ -1413,5 +1416,26 @@ function drawDemo1() {
     //
     c.timeEnd("drawDemo1()");
 } //                                                                   drawDemo1
+
+/** drawRandomDisplay():
+ *  Fills the screen with random colour blocks and pixels.
+ */
+function drawRandomDisplay() {
+    const c = console;
+    c.time("drawRandomDisplay()");
+    const d = ZXDisplay;
+    //
+    // randomize the display
+    c.time("randomizeArea()");
+    d.randomizeArea(0, 0, d.LINES, d.COLUMNS);
+    c.timeEnd("randomizeArea()");
+    //
+    // draw the virutal display on the canvas
+    c.time("update()");
+    d.update();
+    c.timeEnd("update()");
+    //
+    c.timeEnd("drawRandomDisplay()");
+} //                                                           drawRandomDisplay
 
 //end
