@@ -42,10 +42,10 @@
 const ZXDisplay = (() => {
 
 // Display resolution:
-const COLUMNS = 32;  // number of text columns (& horizontal colour attributes)
-const LINES = 24;    // number of text lines (and vertical colour attributes)
-const XMAX = 256;    // horizontal resolution
-const YMAX = 192;    // vertical resolution
+const COLUMNS = 32  // number of text columns (& horizontal colour attributes)
+const LINES = 24    // number of text lines (and vertical colour attributes)
+const XMAX = 256    // horizontal resolution
+const YMAX = 192    // vertical resolution
 
 const my = {
 
@@ -91,16 +91,16 @@ const my = {
     randomizeAreaX: randomizeAreaX,
     update: update,
     updateArea: updateArea
-}; //                                                                         my
+} //                                                                          my
 
 // -----------------------------------------------------------------------------
 // # Internal Constants
 
-const CHARSIZE = 8;  // each character is 8 pixels high and wide
-const SCALE = 3;     // one Spectrum pixel is so many pixels on modern displays
+const CHARSIZE = 8  // each character is 8 pixels high and wide
+const SCALE = 3     // one Spectrum pixel is so many pixels on modern displays
 
-const COLOUR_BYTES = COLUMNS * LINES;
-const PIXEL_BYTES = XMAX * YMAX / 8;  // 8 pixels per byte
+const COLOUR_BYTES = COLUMNS * LINES
+const PIXEL_BYTES = XMAX * YMAX / 8  // 8 pixels per byte
 
 // Maps ZX Spectrum colour indexes to 4-byte RGBA pixels used on the canvas
 // (add 8 to the colour index to get the bright colour value)
@@ -125,7 +125,7 @@ const COLOUR_PIXELS = [
     new Uint8ClampedArray([0x00, 0xFF, 0xFF, 0xFF]),  // 13 (8+5) BRCYAN
     new Uint8ClampedArray([0xFF, 0xFF, 0x00, 0xFF]),  // 14 (8+6) BRYELLOW
     new Uint8ClampedArray([0xFF, 0xFF, 0xFF, 0xFF])   // 15 (8+7) BRWHITE
-];
+]
 
 // The ZX Spectrum character set as it is found in its ROM, starting
 // from address 3D00. Each character is an 8 x 8 grid of pixels.
@@ -998,17 +998,17 @@ const CHARSET = new Uint8ClampedArray([
     0b10011001,  // 0x99 3FFD
     0b01000010,  // 0x42 3FFE
     0b00111100   // 0x3C 3FFF
-]);
+])
 
 // -----------------------------------------------------------------------------
 // # Display State
 
-my.ink = my.BLACK;
-my.paper = my.WHITE;
+my.ink = my.BLACK
+my.paper = my.WHITE
 
 // virtual display memory:
-let displayPixels = new Uint8ClampedArray(PIXEL_BYTES);
-let displayColours = new Uint8ClampedArray(COLOUR_BYTES);
+let displayPixels = new Uint8ClampedArray(PIXEL_BYTES)
+let displayColours = new Uint8ClampedArray(COLOUR_BYTES)
 
 // -----------------------------------------------------------------------------
 // # Context Method
@@ -1020,10 +1020,10 @@ let displayColours = new Uint8ClampedArray(COLOUR_BYTES);
  *  @return  The context used to draw on the canvas.
  */
 function context(canvasId) {
-    let id = canvasId || "zx_canvas";
-    let canvas = document.getElementById(id);
-    let context = canvas.getContext("2d");
-    return context;
+    let id = canvasId || "zx_canvas"
+    let canvas = document.getElementById(id)
+    let context = canvas.getContext("2d")
+    return context
 } //                                                                     context
 
 // -----------------------------------------------------------------------------
@@ -1035,17 +1035,17 @@ function context(canvasId) {
 function clearScreenDithered() {
     //
     // set all the attribute values
-    const attr = makeAttribute(my.ink, my.paper, false);
-    displayColours.fill(attr);
+    const attr = makeAttribute(my.ink, my.paper, false)
+    displayColours.fill(attr)
     //
     // fill the display with an odd pixel pattern
-    displayPixels.fill(0b01010101);
+    displayPixels.fill(0b01010101)
     //
     // fill every other line with an even pixel pattern;
     // it is necessary to do this even/odd alternation otherwise
     // the pixels will align into lines instead of a checkerboard
     for (let i = 0; i < (XMAX * YMAX); i += COLUMNS * 2)
-       displayPixels.fill(0b10101010, i, i + COLUMNS);
+       displayPixels.fill(0b10101010, i, i + COLUMNS)
 } //                                                         clearScreenDithered
 
 /** drawChar():
@@ -1065,17 +1065,17 @@ function drawChar(line, col, ch) {
         return;
     //
     // attributes
-    const a = line * COLUMNS + col;
-    const attr = makeAttribute(my.ink, my.paper);
-    displayColours[a] = attr;
+    const a = line * COLUMNS + col
+    const attr = makeAttribute(my.ink, my.paper)
+    displayColours[a] = attr
     //
     // index of the first byte of the character in the character set
-    const chAt = (ch.charCodeAt(0) - 0x20) * CHARSIZE;
+    const chAt = (ch.charCodeAt(0) - 0x20) * CHARSIZE
     //
     // copy pixel data
     for (let i = 0; i < CHARSIZE; i++) {
-        const at = (line * CHARSIZE + i) * COLUMNS + col;
-        displayPixels[at] = CHARSET[chAt + i];
+        const at = (line * CHARSIZE + i) * COLUMNS + col
+        displayPixels[at] = CHARSET[chAt + i]
     }
 } //                                                                    drawChar
 
@@ -1085,10 +1085,10 @@ function drawChar(line, col, ch) {
  *  system character set in renders properly.
  */
 function drawCharset() {
-    let chars = "";
+    let chars = ""
     for (let ch = 0x20; ch <= 0x7F; ch++)
-        chars += String.fromCharCode(ch);
-    drawText(21, 0, chars);
+        chars += String.fromCharCode(ch)
+    drawText(21, 0, chars)
 } //                                                                 drawCharset
 
 /** drawText():
@@ -1105,12 +1105,12 @@ function drawCharset() {
  *  @param [ch]       The string to draw.
  */
 function drawText(line, col, text) {
-    const length = text.length;
+    const length = text.length
     for (let i = 0; i < length && line < LINES; i++) {
-        drawChar(line, col, text.charAt(i));
+        drawChar(line, col, text.charAt(i))
         if (++col >= COLUMNS) {
-            col = 0;
-            line++;
+            col = 0
+            line++
         }
     }
 } //                                                                    drawText
@@ -1132,18 +1132,18 @@ function drawText(line, col, text) {
  */
 function randomizeArea(line, col, lines, cols) {
     //
-    const randomByte = () => Math.floor(Math.random() * 256);
+    const randomByte = () => Math.floor(Math.random() * 256)
     //
     // randomize the colour attributes
     for (let l = line; l < (line + lines) && l < LINES; l++)
         for (let c = col; c < (col + cols) && c < COLUMNS; c++)
-            displayColours[l * COLUMNS + c] = randomByte();
+            displayColours[l * COLUMNS + c] = randomByte()
     //
     // randomize the pixels
     for (let l = line; l < (line + lines) && l < LINES; l++)
         for (let c = col; c < (col + cols) && c < COLUMNS; c++)
             for (b = 0; b < CHARSIZE; b++)
-                displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte();
+                displayPixels[(l * 8 + b) * COLUMNS + c] = randomByte()
 } //                                                               randomizeArea
 
 /** randomizeAreaX():
@@ -1163,12 +1163,12 @@ function randomizeArea(line, col, lines, cols) {
  */
 function randomizeAreaX(line, col, lines, cols) {
     //
-    const colEnd = Math.min(col + cols, COLUMNS);
-    const randomByte = () => Math.floor(Math.random() * 256);
+    const colEnd = Math.min(col + cols, COLUMNS)
+    const randomByte = () => Math.floor(Math.random() * 256)
     //
     // randomize the colour attributes on one line
     for (let c = col; c < colEnd; c++)
-        displayColours[line * COLUMNS + c] = randomByte();
+        displayColours[line * COLUMNS + c] = randomByte()
     //
     // copy colour attributes to following lines
     for (let l = (line + 1) * COLUMNS + col,
@@ -1176,19 +1176,19 @@ function randomizeAreaX(line, col, lines, cols) {
          l < lineEnd * COLUMNS;
          l += COLUMNS
     ) {
-        const start = line * COLUMNS + col;
-        const end = start + cols;
-        displayColours.copyWithin(l, start, end);
+        const start = line * COLUMNS + col
+        const end = start + cols
+        displayColours.copyWithin(l, start, end)
     }
     // create some random pixels
-    const y0 = line * COLUMNS * CHARSIZE;
+    const y0 = line * COLUMNS * CHARSIZE
     for (let c = col; c < colEnd; c++)
-        displayPixels[y0 + c] = randomByte();
+        displayPixels[y0 + c] = randomByte()
     //
     // copy the random pixels to other lines
-    const yEnd = Math.min(line + lines, LINES) * COLUMNS * CHARSIZE;
+    const yEnd = Math.min(line + lines, LINES) * COLUMNS * CHARSIZE
     for (let y = y0 + COLUMNS + col; y < yEnd; y += COLUMNS)
-        displayPixels.copyWithin(y, y0 + col, y0 + colEnd);
+        displayPixels.copyWithin(y, y0 + col, y0 + colEnd)
 } //                                                              randomizeAreaX
 
 // -----------------------------------------------------------------------------
@@ -1200,8 +1200,8 @@ function randomizeAreaX(line, col, lines, cols) {
  *  @param [context]  Optional context into which to draw.
  */
 function update(context) {
-    const c = context || this.context();
-    this.updateArea(c, 0, 0, LINES, COLUMNS);
+    const c = context || this.context()
+    this.updateArea(c, 0, 0, LINES, COLUMNS)
 } //                                                                      update
 
 /** updateArea():
@@ -1227,92 +1227,91 @@ function updateArea(context, line, col, lines, cols) {
     //
     // set timing to TRUE to output timing details to the console
     const TIMING    = false
-    const doNothing = (s) => {};
+    const doNothing = (s) => {}
     const time      = TIMING ? (s) => {
-                        console.time(`updateArea() ${s}`);
-                      } : doNothing;
+                        console.time(`updateArea() ${s}`)
+                      } : doNothing
     const timeEnd   = TIMING ? (s) => {
-                        console.timeEnd(`updateArea() ${s}`);
-                      } : doNothing;
+                        console.timeEnd(`updateArea() ${s}`)
+                      } : doNothing
     //
     // create temporary structures
-    time("TOTAL");
-    time("init");
-    const REALSIZE = CHARSIZE * SCALE;
-    const x = col  * REALSIZE; // left corner of the block to display
-    const y = line * REALSIZE; // top   "  "
-    const ctx = context || this.context();
-    const img = ctx.createImageData(cols * REALSIZE, lines * REALSIZE);
-    const BITS = new Uint8ClampedArray([128, 64, 32, 16, 8, 4, 2, 1]);
-    let paperPx = new Uint8ClampedArray(4 * SCALE);  // 4 bytes for RGBA
-    let inkPx = new Uint8ClampedArray(4 * SCALE);
-    let prevAttr = 0;
-    timeEnd("init");
+    time("TOTAL")
+    time("init")
+    const REALSIZE = CHARSIZE * SCALE
+    const x = col  * REALSIZE  // left corner of the block to display
+    const y = line * REALSIZE  // top   "  "
+    const ctx = context || this.context()
+    const img = ctx.createImageData(cols * REALSIZE, lines * REALSIZE)
+    const BITS = new Uint8ClampedArray([128, 64, 32, 16, 8, 4, 2, 1])
+    let paperPx = new Uint8ClampedArray(4 * SCALE)  // 4 bytes for RGBA
+    let inkPx = new Uint8ClampedArray(4 * SCALE)
+    let prevAttr = 0
+    timeEnd("init")
     //
     // translate the data in displayColours and displayPixels
     // to RGBA 4-byte grid of pixels in ImageData (img).
-    time("fill");
+    time("fill")
     for (let l = line; l < (line + lines) && l < LINES; l++)
         for (let c = col; c < (col + cols) && c < COLUMNS; c++) {
             //
             // if the attribute value has changed from the previous
             // block, update paperPx and inkPx content
-            let a = displayColours[l * COLUMNS + c];
+            let a = displayColours[l * COLUMNS + c]
             if (a != prevAttr) {
                 //
                 // determine the ink and paper indexes
-                let bright =  (a & 0b0_1_000_000) ? 8 : 0;
-                let ink    =  (a & 0b0_0_000_111) + bright;
-                let paper  = ((a & 0b0_0_111_000) >>> 3) + bright;
+                let bright =  (a & 0b0_1_000_000) ? 8 : 0
+                let ink    =  (a & 0b0_0_000_111) + bright
+                let paper  = ((a & 0b0_0_111_000) >>> 3) + bright
                 //
                 // copy RGBA bytes into paperPx and inkPx (repeat to SCALE)
-                let colour = COLOUR_PIXELS[paper];
+                let colour = COLOUR_PIXELS[paper]
                 for (let i = 0; i < SCALE; i++)
-                    paperPx.set(colour, i * 4);
+                    paperPx.set(colour, i * 4)
                 //
-                colour = COLOUR_PIXELS[ink];
+                colour = COLOUR_PIXELS[ink]
                 for (let i = 0; i < SCALE; i++)
-                    inkPx.set(colour, i * 4);
+                    inkPx.set(colour, i * 4)
                 //
-                prevAttr = a;
+                prevAttr = a
             }
             // draw the vertical lines of the character block
             for (let b = 0; b < CHARSIZE; b++) {
-                const byte = displayPixels[(l * CHARSIZE + b) * COLUMNS + c];
+                const byte = displayPixels[(l * CHARSIZE + b) * COLUMNS + c]
                 for (let bit = 7; bit >= 0; bit--) {
-                    const isInk = byte & BITS[bit];
-                    const N = CHARSIZE * SCALE;
+                    const isInk = byte & BITS[bit]
+                    const N = CHARSIZE * SCALE
                     const i =
                           l   * 4 * COLUMNS * N * N +
                           b   * 4 * COLUMNS * SCALE * N +
                           c   * 4 * N +
                           bit * 4 * SCALE
-                          ;
-                    const px = isInk ? inkPx : paperPx;
-                    img.data.set(px, i);
+                    const px = isInk ? inkPx : paperPx
+                    img.data.set(px, i)
                 }
             }
         }
     // copy the first line of physical pixels down so that each
     // virtual pixel is SCALE physical pixels high on the canvas.
-    timeEnd("fill");
+    timeEnd("fill")
     //
-    const BPL = 4 * XMAX * SCALE; // real bytes per line on canvas
-    time("copy");
-    const length = img.data.length;
+    const BPL = 4 * XMAX * SCALE  // real bytes per line on canvas
+    time("copy")
+    const length = img.data.length
     for (let i = 0; i < length; i += BPL * SCALE) {
-        const start = i;
-        const end   = i + BPL - 1;
+        const start = i
+        const end   = i + BPL - 1
         for (let j = 1; j < SCALE; j++)
-            img.data.copyWithin(i + BPL * j, start, end);
+            img.data.copyWithin(i + BPL * j, start, end)
     }
     // finally, write the rendered image data to the canvas
-    timeEnd("copy");
+    timeEnd("copy")
     //
-    time("putd");
-    ctx.putImageData(img, x, y);
-    timeEnd("putd");
-    timeEnd("TOTAL");
+    time("putd")
+    ctx.putImageData(img, x, y)
+    timeEnd("putd")
+    timeEnd("TOTAL")
 } //                                                                  updateArea
 
 // -----------------------------------------------------------------------------
@@ -1333,111 +1332,111 @@ function updateArea(context, line, col, lines, cols) {
  */
 function makeAttribute(ink, paper) {
     const isBright =
-            ink > 7 || paper > 7;
+            ink > 7 || paper > 7
     const brightOffset =
-            isBright ? 8 : 0;
+            isBright ? 8 : 0
     const inkBits =
             brightOffset +
             ink < 0  ? BLACK :
             ink > 15 ? WHITE :
             ink > 7  ? ink - 8 :
-            ink;
+            ink
     const paperBits =
             brightOffset +
             paper < 0  ? BLACK :
             paper > 15 ? WHITE :
             paper > 7  ? paper - 8 :
-            paper;
+            paper
     const brightBit =
-            isBright ? 0b01_000_000 : 0;
+            isBright ? 0b01_000_000 : 0
     const ret =
-            brightBit | (paperBits << 3) | inkBits;
-    return ret;
+            brightBit | (paperBits << 3) | inkBits
+    return ret
 } //                                                               makeAttribute
 
 // -----------------------------------------------------------------------------
 // # ZXDisplay End
-return my;
-})();
+return my
+})()
 
 // -----------------------------------------------------------------------------
 // # Loader and Demos
 
 window.addEventListener("load", () => {
-    setTimeout(() => { main(); }, 50);
-}, false);
+    setTimeout(() => { main() }, 50)
+}, false)
 
 function main() {
-    setTimeout(() => { drawRandomDisplay();    }, 50);
-    setTimeout(() => { drawRandomDisplay();    }, 300);
-    setTimeout(() => { drawSpectrumOnCanvas(); }, 550);
-//  setTimeout(() => { drawDemo1();            }, 750);
+    setTimeout(() => { drawRandomDisplay()    }, 50)
+    setTimeout(() => { drawRandomDisplay()    }, 300)
+    setTimeout(() => { drawSpectrumOnCanvas() }, 550)
+//  setTimeout(() => { drawDemo1()            }, 750)
 } //                                                                        main
 
 function drawDemo1() {
-    const c = console;
-    c.time("drawDemo1()");
-    const d = ZXDisplay;
+    const c = console
+    c.time("drawDemo1()")
+    const d = ZXDisplay
     //
     // clear the screen with a dithered background
     if (true) {
-        c.time("clearScreenDithered()");
-        d.paper = d.BLUE;
-        d.ink = d.BLACK;
-        d.clearScreenDithered();
-        c.timeEnd("clearScreenDithered()");
+        c.time("clearScreenDithered()")
+        d.paper = d.BLUE
+        d.ink = d.BLACK
+        d.clearScreenDithered()
+        c.timeEnd("clearScreenDithered()")
     }
     // draw a random strip (at top)
     if (true) {
-        const lines = 3;
+        const lines = 3
         //
-        c.time("randomizeArea()");
-        d.randomizeArea(0, 0, lines, d.COLUMNS);
-        c.timeEnd("randomizeArea()");
+        c.time("randomizeArea()")
+        d.randomizeArea(0, 0, lines, d.COLUMNS)
+        c.timeEnd("randomizeArea()")
     }
     // draw a random strip (at center)
     if (true) {
-        const lines = 3;
+        const lines = 3
         //
-        c.time("randomizeAreaX()");
-        d.randomizeAreaX(10, 0, lines, d.COLUMNS);
-        c.timeEnd("randomizeAreaX()");
+        c.time("randomizeAreaX()")
+        d.randomizeAreaX(10, 0, lines, d.COLUMNS)
+        c.timeEnd("randomizeAreaX()")
     }
     // draw the character set (at bottom)
     if (true) {
-        c.time("drawCharset()");
-        d.paper = d.MAGENTA;
-        d.ink = d.BRWHITE;
-        d.drawCharset();
-        c.timeEnd("drawCharset()");
+        c.time("drawCharset()")
+        d.paper = d.MAGENTA
+        d.ink = d.BRWHITE
+        d.drawCharset()
+        c.timeEnd("drawCharset()")
     }
     // draw the virutal display on the canvas
-    c.time("update()");
-    d.update();
-    c.timeEnd("update()");
+    c.time("update()")
+    d.update()
+    c.timeEnd("update()")
     //
-    c.timeEnd("drawDemo1()");
+    c.timeEnd("drawDemo1()")
 } //                                                                   drawDemo1
 
 /** drawRandomDisplay():
  *  Fills the screen with random colour blocks and pixels.
  */
 function drawRandomDisplay() {
-    const c = console;
-    c.time("drawRandomDisplay()");
-    const d = ZXDisplay;
+    const c = console
+    c.time("drawRandomDisplay()")
+    const d = ZXDisplay
     //
     // randomize the display
-    c.time("randomizeArea()");
-    d.randomizeArea(0, 0, d.LINES, d.COLUMNS);
-    c.timeEnd("randomizeArea()");
+    c.time("randomizeArea()")
+    d.randomizeArea(0, 0, d.LINES, d.COLUMNS)
+    c.timeEnd("randomizeArea()")
     //
     // draw the virutal display on the canvas
-    c.time("update()");
-    d.update();
-    c.timeEnd("update()");
+    c.time("update()")
+    d.update()
+    c.timeEnd("update()")
     //
-    c.timeEnd("drawRandomDisplay()");
+    c.timeEnd("drawRandomDisplay()")
 } //                                                           drawRandomDisplay
 
 /** drawSpectrumOnCanvas():
@@ -1445,33 +1444,33 @@ function drawRandomDisplay() {
  *  a series of vertical bars drawn in random colours.
  */
 function drawSpectrumOnCanvas() {
-    const d = ZXDisplay;
-    const c = console;
-    c.time("drawSpectrumOnCanvas()");
+    const d = ZXDisplay
+    const c = console
+    c.time("drawSpectrumOnCanvas()")
     //
     // draw a random strip of horizontal lines
-    c.time("randomizeArea()");
-    d.randomizeAreaX(0, 0, d.LINES, d.COLUMNS);
-    c.timeEnd("randomizeArea()");
+    c.time("randomizeArea()")
+    d.randomizeAreaX(0, 0, d.LINES, d.COLUMNS)
+    c.timeEnd("randomizeArea()")
     //
     // draw labels
-    c.time("labels");
-    d.paper = d.BLACK;
-    d.ink = d.BRWHITE;
-    d.drawText(0,  0, "S P E C T R U M  ON  C A N V A S");
-    d.drawText(1,  0, "                                ");
+    c.time("labels")
+    d.paper = d.BLACK
+    d.ink = d.BRWHITE
+    d.drawText(0,  0, "S P E C T R U M  ON  C A N V A S")
+    d.drawText(1,  0, "                                ")
     //
-    d.ink = d.BLUE;
-    d.drawText(22, 0, "                                ");
-    d.drawText(23, 0, "                       @ali_bala");
+    d.ink = d.BLUE
+    d.drawText(22, 0, "                                ")
+    d.drawText(23, 0, "                       @ali_bala")
     c.timeEnd("labels")
     //
     // draw the virutal display on the canvas
-    c.time("update()");
-    d.update();
-    c.timeEnd("update()");
+    c.time("update()")
+    d.update()
+    c.timeEnd("update()")
     //
-    c.timeEnd("drawSpectrumOnCanvas()");
+    c.timeEnd("drawSpectrumOnCanvas()")
 } //                                                        drawSpectrumOnCanvas
 
 //end
