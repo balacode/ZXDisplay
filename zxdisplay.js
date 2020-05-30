@@ -1171,11 +1171,9 @@ function randomizeAreaX(line, col, lines, cols) {
         displayColours[line * COLUMNS + c] = randomByte()
     //
     // copy colour attributes to following lines
-    for (let l = (line + 1) * COLUMNS + col,
-             lineEnd = Math.min(line + lines, LINES);
-         l < lineEnd * COLUMNS;
-         l += COLUMNS
-    ) {
+    const l0 = (line + 1) * COLUMNS + col
+    const lZ = Math.min(line + lines, LINES)
+    for (let l = l0; l < lZ * COLUMNS; l += COLUMNS) {
         const start = line * COLUMNS + col
         const end = start + cols
         displayColours.copyWithin(l, start, end)
