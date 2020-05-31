@@ -14,12 +14,18 @@
                 align-items: center; /* vertical */
                 padding: 0;
                 margin: 0;
-                background-color: #101010;
+                background-color: #16161D; /* eigengrau */
             }
             #zx_canvas {
-                width: 768px;  /* 256 x-resolution * 3 */
-                height: 576px; /* 192 y-resolution * 3 */
-                background-color: black;
+            		background-color: black;
+            		width: 100vh;
+            		height: 74.16407864998256‬vh;
+            		/*
+            			height = width (100)
+            			         / golden ratio (1.61803398875)
+            			         * screen height in lines (24)
+            			         / bar height in lines (20)
+            		*/
             }
         </style>
         <script type="text/javascript" src="zxdisplay.js"></script>
